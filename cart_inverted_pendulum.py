@@ -2,7 +2,7 @@
 """
 Created on Sun Nov 23 12:59:21 2025
 
-@author: ericn
+@author: Eric Nusser & Finn van Woensel
 """
 
 import wis_2_2_utilities as util
@@ -11,7 +11,7 @@ import wis_2_2_systems as systems
 import numpy as np
 
 #set timestep
-timestep = 2e-3
+timestep = 8e-3
 
 
 class controller():
@@ -41,7 +41,7 @@ def main():
   control = controller()
   simulation = util.simulation(model=model,timestep=timestep)
   simulation.setCost()
-  #simulation.max_duration = 600 #seconde
+  simulation.max_duration = 5 #seconde
   simulation.GIF_toggle = False #set to false to avoid frame and GIF creation
 
   while simulation.vis.Run():
@@ -54,7 +54,7 @@ def main():
       else:
         print('Ending visualisation...')
         simulation.vis.GetDevice().closeDevice()
-        
+  print('Simulation cost end: ', simulation.cost_input, simulation.cost_state)      
   simulation.writeData()
         
   
