@@ -11,27 +11,43 @@ import wis_2_2_systems as systems
 import numpy as np
 
 #set timestep
-timestep = 8e-3
+timestep = 2e-3
 
 
 class controller():
     def __init__(self, target=0):
         self.target = target
-        self.Integral = 0.0
-        self.K_P = 0
-        self.K_I = 0
-        self.K_D = 10
+
+        self.Integral1 = 0.0
+        self.Integral2 = 0.0
+        # PID gains for cart position
+        #P1: -6225, I1: -100, D1: -38
+        self.K_P1 = -3100
+        self.K_I1 = -20
+        self.K_D1 = -32
+        # PID gains for pendulum angle
+        self.K_P2 = 2800
+        self.K_I2 = 30
+        self.K_D2 = 29
         
     def feedBack(self, observe):
         # update integral term
-        self.Integral += observe[0] * timestep
+        self.Integral1 += observe[0] * timestep
+        self.Integral2 += observe[2] * timestep
 
         # calculate feedback
-        u = (
-            self.K_P * observe[0]
-            + self.K_I * self.Integral
-            + self.K_D * observe[1]
+        u1 = (
+            self.K_P1 * observe[0]
+            + self.K_I1 * self.Integral1
+            + self.K_D1 * observe[1]
         )
+        u2 = (
+            self.K_P2 * observe[2]
+            + self.K_I2 * self.Integral2
+            + self.K_D2 * observe[3]
+        )
+
+        u = u1 + u2
 
         return u
 
@@ -41,7 +57,7 @@ def main():
   control = controller()
   simulation = util.simulation(model=model,timestep=timestep)
   simulation.setCost()
-  simulation.max_duration = 5 #seconde
+  simulation.max_duration = 3 #seconde
   simulation.GIF_toggle = False #set to false to avoid frame and GIF creation
 
   while simulation.vis.Run():
