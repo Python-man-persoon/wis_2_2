@@ -30,8 +30,8 @@ class controller():
 
         # PID gains for pendulum angle
         self.K_P2 = 3000
-        self.K_I2 = 50
-        self.K_D2 = 700
+        self.K_I2 = 100
+        self.K_D2 = 400
         
     def feedBack(self, observe):
         # update integral term
@@ -60,8 +60,8 @@ def main():
   control = controller()
   simulation = util.simulation(model=model,timestep=timestep)
   simulation.setCost()
-  simulation.max_duration = 5 #seconds
-  simulation.GIF_toggle = True #set to false to avoid frame and GIF creation
+  simulation.max_duration = 10 #seconds
+  simulation.GIF_toggle = False #set to false to avoid frame and GIF creation
 
   while simulation.vis.Run():
       if simulation.time<simulation.max_duration:
