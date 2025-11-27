@@ -9,9 +9,10 @@ import wis_2_2_utilities as util
 import wis_2_2_systems as systems
 #import random
 import numpy as np
+import plot_csv as plot
 
 #set timestep
-timestep = 2e-3
+timestep = 3e-2
 
 
 class controller():
@@ -22,13 +23,14 @@ class controller():
         self.Integral2 = 0.0
         # PID gains for cart position
         #P1: -6225, I1: -100, D1: -38
-        self.K_P1 = -3100
-        self.K_I1 = -20
-        self.K_D1 = -32
+
+        self.K_P1 = -60
+        self.K_I1 = -57.14285714285714
+        self.K_D1 = -15.75
         # PID gains for pendulum angle
-        self.K_P2 = 2800
-        self.K_I2 = 30
-        self.K_D2 = 29
+        self.K_P2 = 0
+        self.K_I2 = 0
+        self.K_D2 = 0
         
     def feedBack(self, observe):
         # update integral term
@@ -57,7 +59,7 @@ def main():
   control = controller()
   simulation = util.simulation(model=model,timestep=timestep)
   simulation.setCost()
-  simulation.max_duration = 3 #seconde
+  simulation.max_duration = 10 #seconds
   simulation.GIF_toggle = False #set to false to avoid frame and GIF creation
 
   while simulation.vis.Run():
@@ -72,11 +74,8 @@ def main():
         simulation.vis.GetDevice().closeDevice()
   print('Simulation cost end: ', simulation.cost_input, simulation.cost_state)      
   simulation.writeData()
+  plot.csv()
         
-  
-
-
-
 
 if __name__ == "__main__":
   main()
