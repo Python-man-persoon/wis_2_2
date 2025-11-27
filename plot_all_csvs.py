@@ -26,6 +26,7 @@ for df, filename in file_data:
 axes[0].set_title('Cart Positie tegen Tijd')
 axes[0].axhline(y=0.005, color='r', linestyle='--', label='5 mm Doelpositie')
 axes[0].axhline(y=-0.005, color='r', linestyle='--')
+axes[0].locator_params(axis='x', nbins=20)
 axes[0].set_ylabel('Cart Positie (m)')
 axes[0].set_xlabel('Tijd (s)')
 axes[0].legend()
