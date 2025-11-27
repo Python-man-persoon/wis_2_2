@@ -9,16 +9,6 @@ def csv():
     print("First few rows:")
     print(df.head())
     
-    # Based on the simulation code structure, columns are typically:
-    # Column 0: time
-    # Column 1: cost_state  
-    # Column 2: cost_input
-    # Column 3: cart_position
-    # Column 4: cart_velocity
-    # Column 5: pendulum_angle
-    # Column 6: pendulum_angular_velocity
-    # Column 7: control_input
-    
     plt.figure(figsize=(12, 8))
     
     # Plot cart position (column 3)
@@ -40,22 +30,32 @@ def csv():
     # Plot control input (column 7)
     plt.subplot(2, 2, 3)
     plt.plot(df[0], df[7])  # time vs control_input
+    ax = plt.gca()
+    ax.set_ylim([-100, 100])  # Adjust y-axis limits as needed
     plt.xlabel('Time (s)')
     plt.ylabel('Control Force (N)')
     plt.title('Control Input vs Time')
     plt.grid(True)
     
-    # Plot phase portrait
+    # Plot input cost
     plt.subplot(2, 2, 4)
-    plt.plot(df[3], df[4])  # cart_position vs cart_velocity
-    plt.xlabel('Cart Position (m)')
-    plt.ylabel('Cart Velocity (m/s)')
-    plt.title('Cart Phase Portrait')
+    plt.plot(df[0], df[2])  # time vs cost_input
+    plt.xlabel('Time (s)')
+    plt.ylabel('Input Cost')
+    plt.title('Input Cost vs Time')
     plt.grid(True)
 
     
     plt.tight_layout()
     plt.show()
+
+
+
+
+
+
+
+
 
 if __name__ == "__main__":
     csv()

@@ -1,7 +1,7 @@
 # Ziegler-Nichols method calculations for PID tuning
 
-Ku = -100
-Tu = 2.1
+Ku = 700
+Tu = 1.8
 
 KP1 = (0.6*Ku)
 KI1 = (1.2*Ku)/Tu
