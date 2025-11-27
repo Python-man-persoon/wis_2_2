@@ -12,7 +12,7 @@ import numpy as np
 import plot_csv as plot
 
 #set timestep
-timestep = 3e-2
+timestep = 4e-3
 
 
 class controller():
@@ -24,13 +24,13 @@ class controller():
         # PID gains for cart position
         #P1: -6225, I1: -100, D1: -38
 
-        self.K_P1 = -60
-        self.K_I1 = -57.14285714285714
-        self.K_D1 = -15.75
+        self.K_P1 = 200
+        self.K_I1 = 100
+        self.K_D1 = 500
         # PID gains for pendulum angle
-        self.K_P2 = 0
-        self.K_I2 = 0
-        self.K_D2 = 0
+        self.K_P2 = 1000
+        self.K_I2 = 100
+        self.K_D2 = 800
         
     def feedBack(self, observe):
         # update integral term
