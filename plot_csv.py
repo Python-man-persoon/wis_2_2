@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 def csv():
     # Read CSV without headers
-    df = pd.read_csv('cart_inverted_pendulum.csv', header=None)
+    df = pd.read_csv('flywheel_inverted_pendulum.csv', header=None)
     
     print(f"CSV has {df.shape[1]} columns")
     print("First few rows:")
@@ -13,18 +13,22 @@ def csv():
     
     # Plot cart position (column 3)
     plt.subplot(2, 2, 1)
-    plt.plot(df[0], df[3])  # time vs cart_position
+    plt.plot(df[0], df[5])  # time vs cart_position
     plt.xlabel('Time (s)')
-    plt.ylabel('Cart Position (m)')
-    plt.title('Cart Position vs Time')
+    plt.ylabel('Pendulum Angle (rad)')
+    ax = plt.gca()
+    ax.set_ylim([-1,1])
+    plt.title('Pendulum Angle vs Time')
     plt.grid(True)
     
     # Plot pendulum angle (column 5)
     plt.subplot(2, 2, 2)
-    plt.plot(df[0], df[5])  # time vs pendulum_angle
+    plt.plot(df[0], df[3])  # time vs pendulum_angle
     plt.xlabel('Time (s)')
-    plt.ylabel('Pendulum Angle (rad)')
-    plt.title('Pendulum Angle vs Time')
+    plt.ylabel('Flywheel Angle (rad)')
+    ax = plt.gca()
+    ax.set_ylim([-1,1])
+    plt.title('Flywheel Angle vs Time')
     plt.grid(True)
     
     # Plot control input (column 7)

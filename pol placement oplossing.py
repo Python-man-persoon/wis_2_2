@@ -8,6 +8,7 @@ Created on Fri Nov 28 12:54:50 2025
 #import systems
 import wis_2_2_utilities as util
 import wis_2_2_systems as systems
+import plot_csv as plot
 
 import control as ct
 import numpy as np
@@ -52,34 +53,36 @@ matrix_A = np.array([[0,1,0,0],
 
 matrix_B = np.array([[0],[(1/Icyl)],[0],[(-1/T1)]])
 
-print('eigenvalues of A are:')
-print(np.linalg.eigvals(matrix_A))
+#print('eigenvalues of A are:')
+#print(np.linalg.eigvals(matrix_A))
 
 
-list_poles =[-3, -6, -9, -12]
-matrix_K = ct.place(matrix_A,matrix_B,list_poles)
-print(' ')
-print('Gain matrix K is:')
-print(matrix_K)
-print(' ')
-print('eigenvalues of (A-BK) are:')
-print(np.linalg.eigvals((matrix_A-matrix_B @ matrix_K)))
+
+#matrix_K = ct.place(matrix_A,matrix_B,list_poles)
+#print(' ')
+#print('Gain matrix K is:')
+#print(matrix_K)
+#print(' ')
+#print('eigenvalues of (A-BK) are:')
+#print(np.linalg.eigvals((matrix_A-matrix_B @ matrix_K)))
 
 
 class controller():
-    def __init__(self, target=0):
-        self.matrix_gain=np.array([[-1.11700822e+00, -7.75700154e-01, -1.26469337e+03, -2.74726362e+02]])
-
+    def __init__(self, A, B, poles, target=0):
+        #self.matrix_gain=np.array([[-1.25031373e+01, -4.34851760e+00, -5.91529008e+03, -1.19596823e+03]])
+        self.matrix_gain= ct.place(A, B, poles)
+        print(f'Gain matrix: {self.matrix_gain}')
     def feedBack(self, observe): 
         u= -self.matrix_gain @ observe
         return u
     
 def main():
   model=systems.flywheel_inverted_pendulum()
-  control = controller()
+  poles = [complex(-8, 4), complex(-8, -4), -12, -15]
+  control = controller(matrix_A, matrix_B, poles)
   simulation = util.simulation(model=model,timestep=timestep)
   simulation.setCost()
-  simulation.max_duration = 10 #seconds
+  simulation.max_duration = 25 #seconds
   simulation.GIF_toggle = False #set to false to avoid frame and GIF creation
 
   while simulation.vis.Run():
