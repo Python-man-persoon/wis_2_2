@@ -20,42 +20,43 @@ for file in csv_files:
 fig, axes = plt.subplots(2, 2, figsize=(12, 8))
 axes = axes.flatten()  # Flatten the 2x2 array to 1D for easier indexing
 
-# Plot 1: df[0] vs df[3]
+# Plot 1: df[0] vs df[5]
 for df, filename in file_data:
-    axes[0].plot(df.iloc[:, 0], df.iloc[:, 3], label=filename)
-axes[0].set_title('Cart Positie tegen Tijd')
-axes[0].axhline(y=0.005, color='r', linestyle='--', label='5 mm Doelpositie')
-axes[0].axhline(y=-0.005, color='r', linestyle='--')
+    axes[0].plot(df.iloc[:, 0], df.iloc[:, 5], label=filename)
+axes[0].set_title('Pendulum Angle vs Time')
+axes[0].axhline(y=0.1, color='r', linestyle='--', label='0.1 rad Goal')
+axes[0].axhline(y=-0.1, color='r', linestyle='--')
 axes[0].locator_params(axis='x', nbins=20)
-axes[0].set_ylabel('Cart Positie (m)')
-axes[0].set_xlabel('Tijd (s)')
-axes[0].legend()
+axes[0].set_ylabel('Pendulum Angle (rad)')
+axes[0].set_xlabel('Time (s)')
+axes[0].legend(loc='lower right')
 
-# Plot 2: df[0] vs df[5]
+# Plot 2: df[0] vs df[3]
 for df, filename in file_data:
-    axes[1].plot(df.iloc[:, 0], df.iloc[:, 5], label=filename)
-axes[1].set_title('Pendulum Hoek tegen Tijd')
-axes[1].axhline(y=0.1, color='r', linestyle='--', label='0.1 rad Hoek Doelpositie')
+    axes[1].plot(df.iloc[:, 0], df.iloc[:, 3], label=filename)
+axes[1].set_title('Flywheel Angle vs Time')
+axes[1].axhline(y=0.1, color='r', linestyle='--', label='0.1 rad Goal')
 axes[1].axhline(y=-0.1, color='r', linestyle='--')
-axes[1].set_ylabel('Pendulum Hoek (rad)')
-axes[1].set_xlabel('Tijd (s)')
-axes[1].legend()
+axes[1].set_ylabel('Flywheel Angle (rad)')
+axes[1].set_xlabel('Time (s)')
+axes[1].set_ylim([-1,1])
+axes[1].legend(loc='lower left')
 
 # Plot 3: df[0] vs df[7]
 for df, filename in file_data:
     axes[2].plot(df.iloc[:, 0], df.iloc[:, 7], label=filename)
-axes[2].set_title('Cart Kracht tegen Tijd')
-axes[2].set_ylabel('Kracht (N)')
-axes[2].set_xlabel('Tijd (s)')
-axes[2].set_ylim([-50, 50])
-axes[2].legend()
+axes[2].set_title('Flywheel Force vs Time')
+axes[2].set_ylabel('Force (N)')
+axes[2].set_xlabel('Time (s)')
+axes[2].set_ylim([-20, 20])
+axes[2].legend(loc='lower right')
 
 # Plot 4: df[0] vs df[2]
 for df, filename in file_data:
     axes[3].plot(df.iloc[:, 0], df.iloc[:, 2], label=filename)
-axes[3].set_title('Input Kosten tegen Tijd')
-axes[3].set_ylabel('Input Kosten')
-axes[3].set_xlabel('Tijd (s)')
+axes[3].set_title('Input Kosten tegen Time')
+axes[3].set_ylabel('Input Cost')
+axes[3].set_xlabel('Time (s)')
 axes[3].legend()
 
 # Adjust layout and display
