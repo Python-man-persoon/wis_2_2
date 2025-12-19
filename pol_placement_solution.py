@@ -2,7 +2,7 @@
 """
 Created on Fri Nov 28 12:54:50 2025
 
-@author: ericn
+@author: ericn finnw
 """
 
 #import systems
