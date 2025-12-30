@@ -20,23 +20,6 @@ import scipy.linalg
 timestep = 2e-3
 
 
-  
-class pp_controller():
-  def __init__(self, target=0):
-    self.matrix_gain=np.array([[0, 0, 0, 0]])
-    
-  def feedBack(self, observe):
-    u= -self.matrix_gain @ observe
-    return u  
-  
-class controller():
-  def __init__(self, target=0):
-    pass
-    
-  def feedBack(self, observe):
-    u=0
-    return u
-
 def calculate_A():
   epsilon = 1e-6
   n_states = 4
@@ -77,9 +60,31 @@ print("Matrix A:")
 print(A)
 print("Eigenvalue A:")
 print(np.linalg.eigvals(A))
-Co = np.hstack([B, A @ B, A @ A @ B, A @ A @ A @ B])
-rank = np.linalg.matrix_rank(Co)
+Con = np.hstack([B, A @ B, A @ A @ B, A @ A @ A @ B])
+rank = np.linalg.matrix_rank(Con)
 print("Rank of Controllability Matrix:", rank) # Should be 4 for full controllability
+
+#Pendulum 1 angle & Pendulum 2 angle
+C1 = np.array([
+  [1,0,0,0],
+  [0,0,1,0]
+])
+# Extra sensor
+C2 = np.array([
+  [1,1,0,0],
+  [0,0,1,0]
+])
+
+
+  
+class controller():
+  def __init__(self, target=0):
+    pass
+    
+  def feedBack(self, observe):
+    u=0
+    return u
+
 
 
 def main():
