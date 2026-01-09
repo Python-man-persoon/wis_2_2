@@ -11,9 +11,9 @@ def csv():
     
     plt.figure(figsize=(12, 8))
     
-    # Plot cart position (column 3)
+    
     plt.subplot(2, 2, 1)
-    plt.plot(df[0], df[3])  # time vs cart_position
+    plt.plot(df[0], df[3])  # time vs pendulum_angle1
     plt.xlabel('Time (s)')
     plt.ylabel('Pendulum Angle (rad)')
     ax = plt.gca()
@@ -23,7 +23,7 @@ def csv():
     
     # Plot pendulum angle (column 5)
     plt.subplot(2, 2, 2)
-    plt.plot(df[0], df[4])  # time vs pendulum_angle
+    plt.plot(df[0], df[4])  # time vs pendulum_angle_velocity1
     plt.xlabel('Time (s)')
     plt.ylabel('angular velocity')
     ax = plt.gca()
@@ -33,20 +33,20 @@ def csv():
     
     # Plot control input (column 7)
     plt.subplot(2, 2, 3)
-    plt.plot(df[0], df[7])  # time vs control_input
+    plt.plot(df[0], df[5])  # time vs pendulum_angle2
     ax = plt.gca()
     ax.set_ylim([-100, 100])  # Adjust y-axis limits as needed
     plt.xlabel('Time (s)')
-    plt.ylabel('Control Force (N)')
-    plt.title('Control Input vs Time')
+    plt.ylabel('Pendulum Angle 2 (rad)')
+    plt.title('Pendulum Angle 2 vs Time')
     plt.grid(True)
     
     # Plot input cost
     plt.subplot(2, 2, 4)
-    plt.plot(df[0], df[2])  # time vs cost_input
+    plt.plot(df[0], df[6])  # time vs pendulum_angle_velocity2
     plt.xlabel('Time (s)')
-    plt.ylabel('Input Cost')
-    plt.title('Input Cost vs Time')
+    plt.ylabel('Pendulum Angle Velocity 2 (rad/s)')
+    plt.title('Pendulum Angle Velocity 2 vs Time')
     plt.grid(True)
 
     
