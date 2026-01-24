@@ -59,7 +59,6 @@ A = calculate_A()
 B = calculate_B()
 
 """
-# 2 pendulum example
 A = np.array([[0,1,0,0],
               [21,0,-21,0],
               [0,0,0,1],
@@ -70,19 +69,6 @@ B = np.array([[0],
               [0],
               [-70]])
 """
-A = np.array([[0, 1, 0, 0, 0, 0],
-              [20, 0, -45, 0, 5.6, 0],
-              [0, 0, 0, 1, 0, 0],
-              [-26, 0, 124, 0, -33.9, 0],
-              [0, 0, 0, 0, 0, 1],
-              [7.5, 0, -105, 0, 86, 0]])
-
-B = np.array([[26],
-              [0],
-              [0],
-              [-61],
-              [0],
-              [45]])
 
 print("Matrix A:")
 print(A)
@@ -110,7 +96,7 @@ C2 = np.array([
 ])
 
 # Gain matrix from pole placement
-target_poles = np.array([-4,-4,-2,-3,-3,-4])
+target_poles = np.array([-3,-3,-1,-2,-2,-2])
 placement = signal.place_poles(A.T, C1.T, target_poles)
 L = placement.gain_matrix.T
 print("Gain matrix L from pole placement:")
@@ -118,8 +104,8 @@ print(L)
 check_poles = np.linalg.eigvals(A - L @ C1)
 print("\nActual observer poles:", check_poles)
 
-Q = np.diag([6,1,15,1,25,1])
-R = np.array([[0.2]])
+Q = np.diag([1,1,1,1,1,1])
+R = np.array([[0.1]])
 K = ct.lqr(A, B, Q, R)[0]
 print("LQR Gain matrix K:")
 print(K)
@@ -150,19 +136,33 @@ class LQR_observer_controller():
     return (angle + np.pi) % (2 * np.pi) - np.pi
 
   def feedBack(self, observe):
-      y_raw = np.array(observe)
-      y = np.array([[y_raw[0]], [y_raw[2]],[y_raw[4]]])  # Change this according to C matrix
-      prediction = self.A @ self.x_hat + self.B * self.u_prev
-      innovation = y - (self.C @ self.x_hat)
-      corrention = self.L @ innovation
+    y_raw = np.array(observe)
+    y_angles = np.array([y_raw[0], y_raw[2], y_raw[4]])
+    y_wrapped = np.array([self.wrap_angle(angle) for angle in y_angles]).reshape(-1, 1)
+    y = y_wrapped
 
-      x_hat_dot = prediction + corrention
-      self.x_hat += x_hat_dot * self.dt
+    prediction = self.A @ self.x_hat + self.B * self.u_prev
+    innovation = y - (self.C @ self.x_hat)
 
-      u_matrix = -self.K @ self.x_hat
-      u = float(u_matrix.item())
-      self.u_prev = u
-      return u
+    for i in range(len(innovation)):
+      innovation[i, 0] = self.wrap_angle(innovation[i, 0])
+
+    corrention = self.L @ innovation
+
+    x_hat_dot = prediction + corrention
+    self.x_hat += x_hat_dot * self.dt
+
+    self.x_hat[0,0] = self.wrap_angle(self.x_hat[0,0])
+    self.x_hat[2,0] = self.wrap_angle(self.x_hat[2,0])
+    self.x_hat[4,0] = self.wrap_angle(self.x_hat[4,0])
+
+    u_matrix = -self.K @ self.x_hat
+    u = float(u_matrix.item())
+
+    #u = np.clip(u, -20, 20)  # Saturation limits
+
+    self.u_prev = u
+    return u
 
 class controller_no_control:
   def __init__(self, A, B, C, L, K, dt, target=0):
@@ -192,15 +192,14 @@ class controller_no_control:
 
 def main():
 
-  model =systems.stacked_inverted_pendulum(num_pendulum=3,high_kick=1.0)
+  model =systems.stacked_inverted_pendulum(num_pendulum=3,high_kick=1.5)
   control = LQR_observer_controller(A, B, C1, L, K, timestep)
   #control = controller_no_control(A, B, C1, L, K, timestep)
   simulation = util.simulation(model=model,timestep=timestep)
   simulation.setCost()
-  simulation.max_duration = 7 #seconde
-  simulation.data_mode = 'end'
+  simulation.max_duration = 3 #seconde
+  simulation.data_mode = 'direct'
   simulation.GIF_toggle = False #set to false to avoid frame and GIF creation
-  step_count = 0
 
   while simulation.vis.Run():
       if simulation.time<simulation.max_duration:
@@ -208,9 +207,8 @@ def main():
         u = control.feedBack(simulation.observe())
         simulation.control(u)
         simulation.log()
-        if step_count % 200 == 0:  # Only refresh display every 200 steps
-            simulation.refreshTime()
-        step_count += 1
+        simulation.refreshTime()
+
         real_state = simulation.model.getState()
         real_angle1_history.append(real_state[0])
         real_angle2_history.append(real_state[2])
@@ -250,41 +248,6 @@ real_angle3_history = []
 est_angle1_history = []
 est_angle2_history = []
 est_angle3_history = []
-
-def check_stability(A, B, C, K, L):
-    print("--- Stability Analysis ---")
-    
-    # 1. Controller Stability (Closed-loop system)
-    # u = -Kx -> x_dot = (A - BK)x
-    A_cl = A - B @ K
-    ctrl_poles = np.linalg.eigvals(A_cl)
-    
-    # 2. Observer Stability
-    # e_dot = (A - LC)e
-    A_obs = A - L @ C
-    obs_poles = np.linalg.eigvals(A_obs)
-    
-    print(f"Controller Poles (A-BK): \n{np.real(ctrl_poles).round(2)}")
-    is_ctrl_stable = np.all(np.real(ctrl_poles) < 0)
-    print(f"Controller Stable? {is_ctrl_stable}")
-    
-    print(f"\nObserver Poles (A-LC): \n{np.real(obs_poles).round(2)}")
-    is_obs_stable = np.all(np.real(obs_poles) < 0)
-    print(f"Observer Stable? {is_obs_stable}")
-    
-    if is_ctrl_stable and is_obs_stable:
-        # Check if Observer is faster than Controller
-        slowest_obs = np.max(np.real(obs_poles))
-        fastest_ctrl = np.max(np.real(ctrl_poles))
-        if slowest_obs < fastest_ctrl:
-            print("\nResult: System is mathematically stable and Observer is fast enough! ✅")
-        else:
-            print("\nResult: Stable, but Observer might be too slow compared to Controller. ⚠️")
-    else:
-        print("\nResult: SYSTEM IS UNSTABLE! ❌ Check your K or L calculations.")
-
-# Usage:
-check_stability(A, B, C1, K, L)
 
 
 if __name__ == "__main__":
