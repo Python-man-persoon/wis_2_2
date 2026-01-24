@@ -3,63 +3,70 @@ import matplotlib.pyplot as plt
 
 def csv():
     # Read CSV without headers
-    df = pd.read_csv('stacked_inverted_pendulum.csv', header=None)
+    try:
+        df = pd.read_csv('stacked_inverted_pendulum.csv', header=None)
+    except FileNotFoundError:
+        print("Error: 'flywheel_inverted_pendulum.csv' not found.")
+        return
     
     print(f"CSV has {df.shape[1]} columns")
     print("First few rows:")
     print(df.head())
     
-    plt.figure(figsize=(12, 8))
-    
-    
-    plt.subplot(2, 2, 1)
-    plt.plot(df[0], df[3])  # time vs pendulum_angle1
-    plt.xlabel('Time (s)')
-    plt.ylabel('Pendulum Angle (rad)')
-    ax = plt.gca()
-    #ax.set_ylim([-1,1])
-    plt.title('angle of the first pendulum')
-    plt.grid(True)
-    
-    # Plot pendulum angle (column 5)
-    plt.subplot(2, 2, 2)
-    plt.plot(df[0], df[4])  # time vs pendulum_angle_velocity1
-    plt.xlabel('Time (s)')
-    plt.ylabel('angular velocity')
-    ax = plt.gca()
-    #ax.set_ylim([-1,1])
-    plt.title('angular velocity of the first pendulum')
-    plt.grid(True)
-    
-    # Plot control input (column 7)
-    plt.subplot(2, 2, 3)
-    plt.plot(df[0], df[5])  # time vs pendulum_angle2
-    ax = plt.gca()
-    ax.set_ylim([-100, 100])  # Adjust y-axis limits as needed
-    plt.xlabel('Time (s)')
-    plt.ylabel('Pendulum Angle 2 (rad)')
-    plt.title('Pendulum Angle 2 vs Time')
-    plt.grid(True)
-    
-    # Plot input cost
-    plt.subplot(2, 2, 4)
-    plt.plot(df[0], df[6])  # time vs pendulum_angle_velocity2
-    plt.xlabel('Time (s)')
-    plt.ylabel('Pendulum Angle Velocity 2 (rad/s)')
-    plt.title('Pendulum Angle Velocity 2 vs Time')
+    # Setting up a 4-row, 2-column grid
+    plt.figure(figsize=(14, 16))
+    time = df[0]
+
+    # --- Pendulum 1 ---
+    plt.subplot(4, 2, 1)
+    plt.plot(time, df[3], color='b')
+    plt.ylabel('Angle (rad)')
+    plt.title('Pendulum 1: Angle')
     plt.grid(True)
 
-    
+    plt.subplot(4, 2, 2)
+    plt.plot(time, df[4], color='r')
+    plt.ylabel('Speed (rad/s)')
+    plt.title('Pendulum 1: Angular Speed')
+    plt.grid(True)
+
+    # --- Pendulum 2 ---
+    plt.subplot(4, 2, 3)
+    plt.plot(time, df[5], color='b')
+    plt.ylabel('Angle (rad)')
+    plt.title('Pendulum 2: Angle')
+    plt.grid(True)
+
+    plt.subplot(4, 2, 4)
+    plt.plot(time, df[6], color='r')
+    plt.ylabel('Speed (rad/s)')
+    plt.title('Pendulum 2: Angular Speed')
+    plt.grid(True)
+
+    # --- Pendulum 3 ---
+    plt.subplot(4, 2, 5)
+    plt.plot(time, df[7], color='b')
+    plt.ylabel('Angle (rad)')
+    plt.title('Pendulum 3: Angle')
+    plt.grid(True)
+
+    plt.subplot(4, 2, 6)
+    plt.plot(time, df[8], color='r')
+    plt.ylabel('Speed (rad/s)')
+    plt.title('Pendulum 3: Angular Speed')
+    plt.grid(True)
+
+    # --- Control Input ---
+    # Placing it in the 7th slot (bottom left)
+    plt.subplot(4, 2, 7)
+    plt.plot(time, df[9], color='g')
+    plt.xlabel('Time (s)')
+    plt.ylabel('Input')
+    plt.title('Control Input vs Time')
+    plt.grid(True)
+
     plt.tight_layout()
     plt.show()
-
-
-
-
-
-
-
-
 
 if __name__ == "__main__":
     csv()
