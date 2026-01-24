@@ -110,7 +110,7 @@ C2 = np.array([
 ])
 
 # Gain matrix from pole placement
-target_poles = np.array([-4,-4,-2,-3,-3,-4])
+target_poles = np.array([-4,-1,-3,-2,-5,-6])
 placement = signal.place_poles(A.T, C1.T, target_poles)
 L = placement.gain_matrix.T
 print("Gain matrix L from pole placement:")
@@ -118,7 +118,7 @@ print(L)
 check_poles = np.linalg.eigvals(A - L @ C1)
 print("\nActual observer poles:", check_poles)
 
-Q = np.diag([6,1,15,1,25,1])
+Q = np.diag([6.2,1,8.1,1,5.1,1])
 R = np.array([[0.2]])
 K = ct.lqr(A, B, Q, R)[0]
 print("LQR Gain matrix K:")
@@ -197,7 +197,7 @@ def main():
   #control = controller_no_control(A, B, C1, L, K, timestep)
   simulation = util.simulation(model=model,timestep=timestep)
   simulation.setCost()
-  simulation.max_duration = 7 #seconde
+  simulation.max_duration = 10 #seconde
   simulation.data_mode = 'end'
   simulation.GIF_toggle = False #set to false to avoid frame and GIF creation
   step_count = 0
