@@ -59,10 +59,10 @@ def csv():
     # --- Control Input ---
     # Placing it in the 7th slot (bottom left)
     plt.subplot(4, 2, 7)
-    plt.plot(time, df[9], color='g')
+    plt.plot(time, df[2], color='g')
     plt.xlabel('Time (s)')
     plt.ylabel('Input')
-    plt.title('Control Input vs Time')
+    plt.title('Quadratic State Cost vs Time')
     plt.grid(True)
 
     plt.tight_layout()

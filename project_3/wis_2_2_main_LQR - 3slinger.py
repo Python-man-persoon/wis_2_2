@@ -9,6 +9,7 @@ Created on Mon Jul  3 14:33:49 2023
 # DOOR MEET MODUS
 #_______
 
+import plot_csv_3slinger
 import wis_2_2_utilities_nochrono as util
 import wis_2_2_systems_nochrono as systems
 import numpy as np
@@ -225,7 +226,7 @@ def main():
         simulation.vis.GetDevice().closeDevice()
         
   simulation.writeData()
-  plot_csv.csv()
+  plot_csv_3slinger.csv()
 
   plt.figure(figsize=(10, 6))
   plt.plot(time_history, real_angle1_history, label='Real Angle 1 (Sensor)', color='blue', linewidth=2)
@@ -250,42 +251,6 @@ real_angle3_history = []
 est_angle1_history = []
 est_angle2_history = []
 est_angle3_history = []
-
-def check_stability(A, B, C, K, L):
-    print("--- Stability Analysis ---")
-    
-    # 1. Controller Stability (Closed-loop system)
-    # u = -Kx -> x_dot = (A - BK)x
-    A_cl = A - B @ K
-    ctrl_poles = np.linalg.eigvals(A_cl)
-    
-    # 2. Observer Stability
-    # e_dot = (A - LC)e
-    A_obs = A - L @ C
-    obs_poles = np.linalg.eigvals(A_obs)
-    
-    print(f"Controller Poles (A-BK): \n{np.real(ctrl_poles).round(2)}")
-    is_ctrl_stable = np.all(np.real(ctrl_poles) < 0)
-    print(f"Controller Stable? {is_ctrl_stable}")
-    
-    print(f"\nObserver Poles (A-LC): \n{np.real(obs_poles).round(2)}")
-    is_obs_stable = np.all(np.real(obs_poles) < 0)
-    print(f"Observer Stable? {is_obs_stable}")
-    
-    if is_ctrl_stable and is_obs_stable:
-        # Check if Observer is faster than Controller
-        slowest_obs = np.max(np.real(obs_poles))
-        fastest_ctrl = np.max(np.real(ctrl_poles))
-        if slowest_obs < fastest_ctrl:
-            print("\nResult: System is mathematically stable and Observer is fast enough! ✅")
-        else:
-            print("\nResult: Stable, but Observer might be too slow compared to Controller. ⚠️")
-    else:
-        print("\nResult: SYSTEM IS UNSTABLE! ❌ Check your K or L calculations.")
-
-# Usage:
-check_stability(A, B, C1, K, L)
-
 
 if __name__ == "__main__":
   main()
